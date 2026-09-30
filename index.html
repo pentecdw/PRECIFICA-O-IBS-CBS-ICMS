@@ -1,0 +1,276 @@
+<!doctype html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <meta name="robots" content="noindex,nofollow">
+  <meta name="description"
+    content="Precificador privado da Apolo Distribuidora: custo líquido, bases tributárias CBS/IBS, preço de venda e margem.">
+  <title>Precificador CBS/IBS | Apolo Distribuidora</title>
+  <link rel="icon" type="image/svg+xml"
+    href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23142643'/%3E%3Cpath d='M7 25 14 7h4l7 18h-5l-1.5-4h-5L12 25zm7.5-8h3l-1.5-5z' fill='%23f7a53a'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="styles.css">
+  <script src="calculator.js" defer></script>
+  <script src="app.js" defer></script>
+</head>
+
+<body>
+  <a href="#main" class="skip-link">Ir para o precificador</a>
+  <header class="topbar">
+    <div class="brand"><span class="brand-mark" aria-hidden="true">A</span><span class="brand-name">APOLO
+        <small>DISTRIBUIDORA</small></span></div>
+    <div class="tool-name">GESTÃO COMERCIAL <span>/</span> PRECIFICAÇÃO</div>
+    <div class="access-tag"><svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M7 10V7a5 5 0 0 1 10 0v3M6 10h12v11H6z" />
+      </svg>Acesso privado</div>
+  </header>
+  <main id="main">
+    <div class="page-heading">
+      <div>
+        <p class="eyebrow">CUSTO · TRIBUTOS · MARGEM</p>
+        <h1>Precificador <span>CBS/IBS</span></h1>
+      </div><span class="scenario-pill">Cenário de planejamento</span>
+    </div>
+    <div class="workspace">
+      <section class="input-panel" aria-labelledby="simulation-title">
+        <div class="section-heading">
+          <h2 id="simulation-title">Sua simulação</h2><button id="reset" class="text-button" type="button">Restaurar
+            padrão</button>
+        </div>
+        <div class="mode-tabs" role="tablist" aria-label="Modo de cálculo">
+          <button id="tab-forward" class="mode-tab active" type="button" role="tab" aria-selected="true"
+            aria-controls="form-panel" tabindex="0" data-mode="forward">Formar preço</button>
+          <button id="tab-inverse" class="mode-tab" type="button" role="tab" aria-selected="false"
+            aria-controls="form-panel" tabindex="-1" data-mode="inverse">Analisar venda</button>
+        </div>
+        <form id="form-panel" role="tabpanel" aria-labelledby="tab-forward" novalidate>
+          <div id="basis-field" class="field"><label for="basis">Ponto de partida</label><select id="basis">
+              <option value="cost">Custo líquido do produto</option>
+              <option value="base">Base sem tributos</option>
+            </select></div>
+          <div class="field amount-field"><label id="amount-label" for="amount">Custo líquido</label>
+            <div class="input-wrap"><span>R$</span><input id="amount" name="amount" type="text" inputmode="decimal"
+                value="70,00" autocomplete="off" aria-describedby="amount-help amount-error"></div>
+            <p id="amount-help" class="help">Aquisição menos créditos recuperáveis. Se o ERP já descontou os créditos,
+              use o custo líquido informado.</p>
+            <p id="amount-error" class="field-error" hidden></p>
+          </div>
+          <div id="price-field" class="field" hidden><label for="price">Preço de venda final</label>
+            <div class="input-wrap"><span>R$</span><input id="price" name="price" type="text" inputmode="decimal"
+                value="127,24" autocomplete="off" aria-describedby="price-error"></div>
+            <p id="price-error" class="field-error" hidden></p>
+          </div>
+          <div class="rates-heading">
+            <h3>Alíquotas da operação</h3><span>Editáveis</span>
+          </div>
+          <div class="rate-grid">
+            <div class="field"><label for="icms">ICMS</label>
+              <div class="input-wrap"><input id="icms" type="text" inputmode="decimal" value="18"
+                  aria-describedby="icms-error"><span>%</span></div>
+              <p id="icms-error" class="field-error" hidden></p>
+            </div>
+            <div class="field"><label for="cbs">CBS</label>
+              <div class="input-wrap"><input id="cbs" type="text" inputmode="decimal" value="8,8"
+                  aria-describedby="cbs-error"><span>%</span></div>
+              <p id="cbs-error" class="field-error" hidden></p>
+            </div>
+            <div class="field"><label for="ibs">IBS</label>
+              <div class="input-wrap"><input id="ibs" type="text" inputmode="decimal" value="0,1"
+                  aria-describedby="ibs-error"><span>%</span></div>
+              <p id="ibs-error" class="field-error" hidden></p>
+            </div>
+          </div>
+          <div class="field margin-field"><label id="margin-label" for="margin">Margem desejada</label>
+            <div class="input-wrap"><input id="margin" type="text" inputmode="decimal" value="20"
+                aria-describedby="margin-help margin-error"><span>%</span></div>
+            <p id="margin-help" class="help">Percentual do preço final que sobra após custo e os três tributos.</p>
+            <p id="margin-error" class="field-error" hidden></p>
+          </div>
+          <p class="input-note">Os resultados mudam enquanto você digita. Use vírgula para decimais.</p>
+        </form>
+      </section>
+      <section class="output-panel" aria-labelledby="result-title">
+        <div id="invalid" class="invalid-panel" role="status" hidden>
+          <div class="invalid-icon" aria-hidden="true">!</div>
+          <h2>Revise os valores</h2>
+          <p id="invalid-message"></p>
+          <p class="help">O resultado aparece assim que os dados forem válidos.</p>
+        </div>
+        <div id="valid-result">
+          <div class="price-card">
+            <div class="price-card-heading"><span id="result-title">Preço de venda sugerido</span><span
+                class="card-symbol" aria-hidden="true">R$</span></div>
+            <div id="price-result" class="price-result">R$ 127,24</div>
+            <div class="price-card-footer"><span id="price-caption">Preço com ICMS, CBS e IBS</span><span
+                id="mode-caption">A partir do custo</span></div>
+          </div>
+          <div class="metrics">
+            <div class="metric"><span id="profit-label">Sobra após custo e tributos</span><strong id="profit-result">R$
+                25,45</strong><small id="cost-caption">Custo líquido: R$ 70,00</small></div>
+            <div class="metric margin-metric"><span>Margem resultante</span><strong
+                id="margin-result">20,00%</strong><small id="target-status">Meta de 20,00% atendida</small></div>
+          </div>
+          <div class="composition-heading">
+            <h2>Destino do preço de venda</h2><span id="burden-result">24,98% em tributos</span>
+          </div>
+          <div class="composition-bar" role="img" id="composition-bar" aria-label="Composição do preço"><span
+              id="cost-bar" class="segment cost"></span><span id="tax-bar" class="segment tax"></span><span
+              id="profit-bar" class="segment profit"></span></div>
+          <p id="loss-note" hidden></p>
+          <div class="composition-legend"><span><i class="cost"></i>Custo <b id="cost-share"></b></span><span><i
+                class="tax"></i>Tributos <b id="tax-share"></b></span><span><i class="profit"></i>Sobra <b
+                id="profit-share"></b></span></div>
+          <div class="detail-heading">
+            <h2>Bases e tributos</h2><span>Por unidade</span>
+          </div>
+          <div class="table-scroll">
+            <table class="tax-table">
+              <thead>
+                <tr>
+                  <th scope="col">Tributo</th>
+                  <th scope="col">Base de cálculo</th>
+                  <th scope="col">Alíquota</th>
+                  <th scope="col">Valor</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <th scope="row">ICMS <small>Por dentro do preço</small></th>
+                  <td id="icms-base"></td>
+                  <td id="icms-rate"></td>
+                  <td id="icms-value"></td>
+                </tr>
+                <tr>
+                  <th scope="row">CBS <small>Exclui ICMS, CBS e IBS</small></th>
+                  <td id="cbs-base"></td>
+                  <td id="cbs-rate"></td>
+                  <td id="cbs-value"></td>
+                </tr>
+                <tr>
+                  <th scope="row">IBS <small>Mesma base da CBS</small></th>
+                  <td id="ibs-base"></td>
+                  <td id="ibs-rate"></td>
+                  <td id="ibs-value"></td>
+                </tr>
+              </tbody>
+              <tfoot>
+                <tr>
+                  <th scope="row" colspan="3">Total de tributos</th>
+                  <td id="tax-total"></td>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+          <div class="reconciliation"><span>Receita após os três tributos</span><strong id="net-result"></strong></div>
+          <div id="base-cost-note" class="base-cost-note" hidden><span>Custo líquido máximo para a meta</span><strong
+              id="max-cost-result"></strong>
+            <p>Na entrada por base, este é o limite de custo para atingir a margem informada. A sobra pressupõe este
+              custo.</p>
+          </div>
+          <p class="round-note" id="round-note"></p>
+        </div>
+        <p id="live-result" class="sr-only" role="status" aria-live="polite" aria-atomic="true"></p>
+      </section>
+    </div>
+    <section class="support-section" aria-labelledby="examples-title">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">CONFIRA NA PRÁTICA</p>
+          <h2 id="examples-title">Exemplos validados</h2>
+        </div><span class="example-rates">ICMS 18% · CBS 8,8% · IBS 0,1%</span>
+      </div>
+      <div class="example-grid">
+        <button type="button" class="example" data-example="cost"><span class="example-number">01</span><span
+            class="example-content"><strong>Formar preço</strong><span>Custo R$ 70,00 · Meta 20%</span><b
+              id="example-cost-result">Venda R$ 127,24</b><small>Carregar exemplo</small></span></button>
+        <button type="button" class="example" data-example="inverse"><span class="example-number">02</span><span
+            class="example-content"><strong>Analisar uma venda</strong><span>Custo R$ 70,00 · Venda R$ 150,00</span><b
+              id="example-inverse-result"></b><small>Carregar exemplo</small></span></button>
+        <button type="button" class="example" data-example="base"><span class="example-number">03</span><span
+            class="example-content"><strong>Partir da base</strong><span>Base R$ 100,00 · Meta 20%</span><b
+              id="example-base-result"></b><small>Carregar exemplo</small></span></button>
+      </div>
+    </section>
+    <section class="method-section" aria-labelledby="method-title">
+      <div class="method-intro">
+        <p class="eyebrow">MEMÓRIA DE CÁLCULO</p>
+        <h2 id="method-title">Cada base, sem mistério.</h2>
+        <p>ICMS dentro do preço final. CBS e IBS calculados por fora de sua base, sem os três tributos.</p>
+      </div>
+      <div class="method-details">
+        <details>
+          <summary>Ver fórmulas e valores desta simulação <span aria-hidden="true">+</span></summary>
+          <div class="details-body" id="formula-details">
+            <dl class="formula-list">
+              <div>
+                <dt>ICMS</dt>
+                <dd>Preço final × alíquota de ICMS</dd>
+              </div>
+              <div>
+                <dt>Base CBS/IBS</dt>
+                <dd>(Preço final − ICMS) ÷ (1 + CBS + IBS)</dd>
+              </div>
+              <div>
+                <dt>CBS / IBS</dt>
+                <dd>Base CBS/IBS × respectiva alíquota</dd>
+              </div>
+              <div>
+                <dt>Preço pelo custo</dt>
+                <dd>Custo ÷ [(1 − ICMS) ÷ (1 + CBS + IBS) − margem]</dd>
+              </div>
+              <div>
+                <dt>Preço pela base</dt>
+                <dd>Base × (1 + CBS + IBS) ÷ (1 − ICMS)</dd>
+              </div>
+              <div>
+                <dt>Sobra</dt>
+                <dd>Preço − ICMS − CBS − IBS − custo líquido</dd>
+              </div>
+              <div>
+                <dt>Margem</dt>
+                <dd>Sobra ÷ preço final × 100</dd>
+              </div>
+            </dl>
+            <p>Nas fórmulas, alíquotas e margem são decimais: 18% = 0,18.</p>
+            <p id="formula-live" class="formula-live"></p>
+            <p>Tributos são arredondados individualmente a centavos. O preço pelo custo sobe ao centavo e é ajustado, se
+              necessário, para atender à meta depois desse arredondamento. A base exibida usa o ICMS já arredondado;
+              pode diferir em um centavo da receita após todos os tributos.</p>
+          </div>
+        </details>
+        <details>
+          <summary>Premissas e regra de transição <span aria-hidden="true">+</span></summary>
+          <div class="details-body">
+            <p>Este módulo simula somente custo líquido, ICMS, CBS, IBS e margem. Comissão, frete, PIS/COFINS, IPI,
+              substituição tributária, IRPJ, CSLL e despesas operacionais não entram no cálculo. A “margem líquida” aqui
+              é a sobra após o custo e os três tributos simulados; não é o lucro líquido contábil da empresa.</p>
+            <p>O custo deve estar líquido dos créditos recuperáveis de aquisição. O site não calcula créditos nem reduz
+              o custo novamente.</p>
+            <p>O modelo pressupõe operação tributada normal e inclui CBS/IBS efetivamente exigíveis na base do ICMS. Não
+              faz enquadramento por produto, regime ou ano. Alterar as alíquotas não altera essa regra de formação de
+              bases.</p>
+            <p><strong>Em 2026:</strong> as alíquotas de teste são CBS 0,9% e IBS 0,1%, com dispensa de recolhimento
+              para quem cumpre as obrigações acessórias. A orientação paulista exclui CBS/IBS da base do ICMS nesse ano.
+              Por isso, CBS 8,8% é uma premissa editável de planejamento; esta ferramenta não reproduz a apuração fiscal
+              completa de 2026.</p>
+            <p>Referências conferidas em 30/09/2026: <a
+                href="https://www2.camara.leg.br/legin/fed/leicom/2025/leicomplementar-214-16-janeiro-2025-796905-normaatualizada-pl.html"
+                target="_blank" rel="noopener noreferrer">LC 214/2025, art. 12 e arts. 343, 346 e 348</a> e <a
+                href="https://legislacao.fazenda.sp.gov.br/Paginas/RC33083_2026.aspx" target="_blank"
+                rel="noopener noreferrer">SEFAZ-SP, RC 33083/2026</a>.</p>
+          </div>
+        </details>
+      </div>
+    </section>
+    <aside class="planning-note"><strong>Cenário, não alíquota vigente de 2026.</strong><span>O padrão 18% / 8,8% / 0,1%
+        segue a simulação Apolo. Consulte as premissas antes de aplicar ao cadastro fiscal.</span></aside>
+  </main>
+  <footer><span>APOLO DISTRIBUIDORA <b>·</b> Precificação CBS/IBS</span><span>Cálculos no seu navegador</span></footer>
+  <noscript>
+    <p class="noscript">Ative o JavaScript para utilizar o precificador.</p>
+  </noscript>
+</body>
+
+</html>
