@@ -62,7 +62,7 @@
     setText('cost-caption', (input.mode === 'base' ? 'Custo máximo: ' : 'Custo líquido: ') + money(r.cost));
     const gainText = r.actualGain === null ? 'Não definido (custo zero)' : percent(r.actualGain);
     const gainDetailed = r.actualGain === null ? 'Não definido (custo zero)' : decimal(r.actualGain, 4) + '%';
-    setText(   'margin-result',   r.cost > 0 ? decimal(r.net / r.cost, 4) : 'Não definido (custo zero)' );
+    setText('margin-result', r.cost > 0 ? decimal(r.net / r.cost, 4) : 'Não definido (custo zero)');
     setText('sale-margin-result', 'Margem sobre a venda: ' + percent(r.actualMargin));
     const met = r.actualGain !== null && r.actualGain + 1e-9 >= r.target;
     setText('target-status', r.actualGain === null ? 'Não é possível comparar a meta com custo zero.' : r.profit < 0 ? 'Venda com prejuízo de ' + money(-r.profit) : 'Meta sobre o custo de ' + percent(r.target) + (met ? ' atendida' : ' não atendida'));
