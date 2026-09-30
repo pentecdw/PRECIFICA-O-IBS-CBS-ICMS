@@ -7,7 +7,7 @@
   <meta name="color-scheme" content="light">
   <meta name="robots" content="noindex,nofollow">
   <meta name="description"
-    content="Precificador privado da Apolo Distribuidora: custo líquido, bases tributárias CBS/IBS, preço de venda e margem.">
+    content="Precificador privado da Apolo Distribuidora: custo líquido, bases tributárias CBS/IBS, preço de venda e ganho sobre o custo.">
   <title>Precificador CBS/IBS | Apolo Distribuidora</title>
   <link rel="icon" type="image/svg+xml"
     href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23142643'/%3E%3Cpath d='M7 25 14 7h4l7 18h-5l-1.5-4h-5L12 25zm7.5-8h3l-1.5-5z' fill='%23f7a53a'/%3E%3C/svg%3E">
@@ -29,7 +29,7 @@
   <main id="main">
     <div class="page-heading">
       <div>
-        <p class="eyebrow">CUSTO · TRIBUTOS · MARGEM</p>
+        <p class="eyebrow">CUSTO · TRIBUTOS · GANHO</p>
         <h1>Precificador <span>CBS/IBS</span></h1>
       </div><span class="scenario-pill">Cenário de planejamento</span>
     </div>
@@ -59,7 +59,7 @@
           </div>
           <div id="price-field" class="field" hidden><label for="price">Preço de venda final</label>
             <div class="input-wrap"><span>R$</span><input id="price" name="price" type="text" inputmode="decimal"
-                value="127,24" autocomplete="off" aria-describedby="price-error"></div>
+                value="111,56" autocomplete="off" aria-describedby="price-error"></div>
             <p id="price-error" class="field-error" hidden></p>
           </div>
           <div class="rates-heading">
@@ -82,10 +82,10 @@
               <p id="ibs-error" class="field-error" hidden></p>
             </div>
           </div>
-          <div class="field margin-field"><label id="margin-label" for="margin">Margem desejada</label>
+          <div class="field margin-field"><label id="margin-label" for="margin">Ganho desejado sobre o custo</label>
             <div class="input-wrap"><input id="margin" type="text" inputmode="decimal" value="20"
                 aria-describedby="margin-help margin-error"><span>%</span></div>
-            <p id="margin-help" class="help">Percentual do preço final que sobra após custo e os três tributos.</p>
+            <p id="margin-help" class="help">Sobra após os tributos e o custo, dividida pelo custo líquido. Ex.: ganho de 20% equivale a um índice de 1,20.</p>
             <p id="margin-error" class="field-error" hidden></p>
           </div>
           <p class="input-note">Os resultados mudam enquanto você digita. Use vírgula para decimais.</p>
@@ -102,18 +102,18 @@
           <div class="price-card">
             <div class="price-card-heading"><span id="result-title">Preço de venda sugerido</span><span
                 class="card-symbol" aria-hidden="true">R$</span></div>
-            <div id="price-result" class="price-result">R$ 127,24</div>
+            <div id="price-result" class="price-result">R$ 111,56</div>
             <div class="price-card-footer"><span id="price-caption">Preço com ICMS, CBS e IBS</span><span
                 id="mode-caption">A partir do custo</span></div>
           </div>
           <div class="metrics">
             <div class="metric"><span id="profit-label">Sobra após custo e tributos</span><strong id="profit-result">R$
-                25,45</strong><small id="cost-caption">Custo líquido: R$ 70,00</small></div>
-            <div class="metric margin-metric"><span>Margem resultante</span><strong
-                id="margin-result">20,00%</strong><small id="target-status">Meta de 20,00% atendida</small></div>
+                14,01</strong><small id="cost-caption">Custo líquido: R$ 70,00</small></div>
+            <div class="metric margin-metric"><span>Ganho sobre o custo</span><strong
+                id="margin-result">20,01%</strong><small id="target-status">Meta sobre o custo de 20,00% atendida</small><small id="sale-margin-result">Margem sobre a venda: 12,56%</small></div>
           </div>
           <div class="composition-heading">
-            <h2>Destino do preço de venda</h2><span id="burden-result">24,98% em tributos</span>
+            <h2>Destino do preço de venda</h2><span id="burden-result">24,70% em tributos</span>
           </div>
           <div class="composition-bar" role="img" id="composition-bar" aria-label="Composição do preço"><span
               id="cost-bar" class="segment cost"></span><span id="tax-bar" class="segment tax"></span><span
@@ -166,7 +166,7 @@
           <div class="reconciliation"><span>Receita após os três tributos</span><strong id="net-result"></strong></div>
           <div id="base-cost-note" class="base-cost-note" hidden><span>Custo líquido máximo para a meta</span><strong
               id="max-cost-result"></strong>
-            <p>Na entrada por base, este é o limite de custo para atingir a margem informada. A sobra pressupõe este
+            <p>Na entrada por base, este é o limite de custo para atingir o ganho sobre o custo informado. A sobra pressupõe este
               custo.</p>
           </div>
           <p class="round-note" id="round-note"></p>
@@ -183,13 +183,13 @@
       </div>
       <div class="example-grid">
         <button type="button" class="example" data-example="cost"><span class="example-number">01</span><span
-            class="example-content"><strong>Formar preço</strong><span>Custo R$ 70,00 · Meta 20%</span><b
-              id="example-cost-result">Venda R$ 127,24</b><small>Carregar exemplo</small></span></button>
+            class="example-content"><strong>Formar preço</strong><span>Custo R$ 70,00 · Ganho sobre o custo 20%</span><b
+              id="example-cost-result">Venda R$ 111,56</b><small>Carregar exemplo</small></span></button>
         <button type="button" class="example" data-example="inverse"><span class="example-number">02</span><span
             class="example-content"><strong>Analisar uma venda</strong><span>Custo R$ 70,00 · Venda R$ 150,00</span><b
               id="example-inverse-result"></b><small>Carregar exemplo</small></span></button>
         <button type="button" class="example" data-example="base"><span class="example-number">03</span><span
-            class="example-content"><strong>Partir da base</strong><span>Base R$ 100,00 · Meta 20%</span><b
+            class="example-content"><strong>Partir da base</strong><span>Base R$ 100,00 · Ganho sobre o custo 20%</span><b
               id="example-base-result"></b><small>Carregar exemplo</small></span></button>
       </div>
     </section>
@@ -218,7 +218,7 @@
               </div>
               <div>
                 <dt>Preço pelo custo</dt>
-                <dd>Custo ÷ [(1 − ICMS) ÷ (1 + CBS + IBS) − margem]</dd>
+                <dd>Custo × (1 + ganho) ÷ [(1 − ICMS) ÷ (1 + CBS + IBS)]</dd>
               </div>
               <div>
                 <dt>Preço pela base</dt>
@@ -229,11 +229,19 @@
                 <dd>Preço − ICMS − CBS − IBS − custo líquido</dd>
               </div>
               <div>
-                <dt>Margem</dt>
+                <dt>Ganho sobre o custo (%)</dt>
+                <dd>Sobra ÷ custo líquido × 100 (não definido para custo zero)</dd>
+              </div>
+              <div>
+                <dt>Custo máximo para a meta</dt>
+                <dd>Receita após tributos ÷ (1 + ganho), arredondada para baixo a centavos</dd>
+              </div>
+              <div>
+                <dt>Margem sobre a venda (%)</dt>
                 <dd>Sobra ÷ preço final × 100</dd>
               </div>
             </dl>
-            <p>Nas fórmulas, alíquotas e margem são decimais: 18% = 0,18.</p>
+            <p>Nas fórmulas, alíquotas e ganho usado na formação do preço são decimais: 18% = 0,18.</p>
             <p id="formula-live" class="formula-live"></p>
             <p>Tributos são arredondados individualmente a centavos. O preço pelo custo sobe ao centavo e é ajustado, se
               necessário, para atender à meta depois desse arredondamento. A base exibida usa o ICMS já arredondado;
@@ -243,9 +251,7 @@
         <details>
           <summary>Premissas e regra de transição <span aria-hidden="true">+</span></summary>
           <div class="details-body">
-            <p>Este módulo simula somente custo líquido, ICMS, CBS, IBS e margem. Comissão, frete, PIS/COFINS, IPI,
-              substituição tributária, IRPJ, CSLL e despesas operacionais não entram no cálculo. A “margem líquida” aqui
-              é a sobra após o custo e os três tributos simulados; não é o lucro líquido contábil da empresa.</p>
+            <p>Este módulo simula somente custo líquido, ICMS, CBS, IBS e ganho sobre o custo. Comissão, frete, PIS/COFINS, IPI, substituição tributária, IRPJ, CSLL e despesas operacionais não entram no cálculo. O ganho sobre o custo usa a sobra após custo e os três tributos simulados; não representa o lucro líquido contábil da empresa.</p>
             <p>O custo deve estar líquido dos créditos recuperáveis de aquisição. O site não calcula créditos nem reduz
               o custo novamente.</p>
             <p>O modelo pressupõe operação tributada normal e inclui CBS/IBS efetivamente exigíveis na base do ICMS. Não
