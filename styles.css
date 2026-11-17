@@ -1326,3 +1326,11 @@ footer b {
   color: #777777;
   cursor: not-allowed;
 }
+.financial { background: #8865bc; }
+.promotion-panel { margin: 28px 0; padding: 26px; background: #fff; border: 1px solid #dce5ef; border-radius: 12px; }
+.promotion-panel > p { line-height: 1.6; }
+.promotion-panel .field { max-width: 420px; margin-top: 20px; }
+.promotion-metrics { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 18px; margin: 24px 0; }
+.promotion-metrics span { display: block; font-size: 13px; color: var(--muted); margin-bottom: 8px; }
+.promotion-metrics strong { display: block; font-size: 21px; color: var(--ink); }
+@media(max-width: 760px) { .promotion-metrics { grid-template-columns: 1fr; } .promotion-panel { padding: 18px; } }

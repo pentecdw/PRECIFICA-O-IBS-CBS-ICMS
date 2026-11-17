@@ -4,14 +4,14 @@
   const round = n => Math.round((n + Number.EPSILON) * 100) / 100;
   const ceil = n => Math.ceil(n * 100 - 1e-7) / 100;
   const floor = n => Math.floor(n * 100 + 1e-7) / 100;
-  function parse(value) {
+  function parse(value, monetary = false) {
     if (typeof value === 'number') return Number.isFinite(value) ? value : NaN;
     let s = String(value).trim().replace(/^R\$\s*/, '').replace(/\s/g, '');
     if (!s || !/^-?[\d.,]+$/.test(s)) return NaN;
     if (s.includes(',')) {
       if (!/^-?(?:\d+|\d{1,3}(?:\.\d{3})+),\d+$/.test(s)) return NaN;
       s = s.replace(/\./g, '').replace(',', '.');
-    } else if ((s.match(/\./g) || []).length > 1) {
+    } else if ((s.match(/\./g) || []).length > 1 || (monetary && /^-?\d{1,3}(?:\.\d{3})+$/.test(s))) {
       if (!/^-?\d{1,3}(?:\.\d{3})+$/.test(s)) return NaN;
       s = s.replace(/\./g, '');
     } else if (!/^-?\d+(?:\.\d+)?$/.test(s)) return NaN;
@@ -25,6 +25,7 @@
         errors[key] = `${name}: informe uma alíquota entre 0% e ${key === 'icms' ? 'menos de 100%' : '100%'}.`;
     }
     if (!Number.isFinite(input.margin) || input.margin < 0) errors.margin = 'Informe um ganho sobre o custo maior ou igual a 0%.';
+    if (input.financial !== undefined && (!Number.isFinite(input.financial) || input.financial < 0 || input.financial > 100)) errors.financial = 'Informe uma taxa financeira entre 0% e 100% do custo líquido.';
     const amountName = input.mode === 'base' ? 'Base sem tributos' : 'Custo líquido';
     if (!Number.isFinite(input.amount) || input.amount < 0 || input.amount > MAX_AMOUNT || (input.mode !== 'inverse' && input.amount === 0))
       errors.amount = `${amountName}: informe ${input.mode === 'inverse' ? 'zero ou ' : ''}um valor positivo até R$ 1 bilhão.`;
@@ -44,17 +45,17 @@
     const errors = validate(input);
     if (Object.keys(errors).length) return { ok: false, errors };
     // margin mantém o nome da entrada por compatibilidade; representa ganho sobre o custo.
-    const i = input.icms / 100, c = input.cbs / 100, b = input.ibs / 100, m = input.margin / 100;
+    const i = input.icms / 100, c = input.cbs / 100, b = input.ibs / 100, m = input.margin / 100, f = (input.financial ?? 0) / 100;
     const retained = (1 - i) / (1 + c + b);
     let cost = round(input.amount), exactPrice, result;
     if (input.mode === 'cost') {
       if (cost <= 0) return { ok: false, errors: { amount: 'Informe um custo de pelo menos R$ 0,01.' } };
-      exactPrice = cost * (1 + m) / retained;
+      exactPrice = (cost * (1 + m) + round(cost * f)) / retained;
       if (!Number.isFinite(exactPrice) || exactPrice > MAX_AMOUNT) return { ok: false, errors: { margin: 'O preço calculado excede R$ 1 bilhão. Reduza o custo ou o ganho desejado.' } };
       let price = ceil(exactPrice);
       for (let attempt = 0; attempt < 10000; attempt++) {
         result = taxes(price, i, c, b);
-        if (result.net - cost >= m * cost - 1e-8) break;
+        if (result.net - cost - round(cost * f) >= m * cost - 1e-8) break;
         if (attempt === 9999 || price + .01 > MAX_AMOUNT) return { ok: false, errors: { margin: 'Não foi possível atender à meta dentro dos limites de preço e arredondamento. Revise os valores.' } };
         price = round(price + .01);
       }
@@ -63,21 +64,36 @@
       if (!Number.isFinite(exactPrice) || exactPrice > MAX_AMOUNT) return { ok: false, errors: { amount: 'A base gera um preço acima de R$ 1 bilhão. Reduza o valor.' } };
       result = taxes(round(exactPrice), i, c, b);
       if (result.price <= 0) return { ok: false, errors: { amount: 'Informe uma base que gere pelo menos R$ 0,01 de venda.' } };
-      cost = floor(result.net / (1 + m));
+      cost = floor(result.net / (1 + m + f));
+      while (cost > 0 && result.net - cost - round(cost * f) < m * cost - 1e-8) cost = round(cost - .01);
       if (cost <= 0) return { ok: false, errors: { margin: 'Esta base não comporta um custo de pelo menos R$ 0,01 para o ganho desejado.' } };
     } else {
       exactPrice = round(input.price);
       if (exactPrice <= 0) return { ok: false, errors: { price: 'Informe um preço de pelo menos R$ 0,01.' } };
       result = taxes(exactPrice, i, c, b);
     }
-    const profit = round(result.net - cost);
-    return { ok: true, ...result, cost, profit, actualMargin: profit / result.price * 100,
+    const financialCost = round(cost * f);
+    const profit = round(result.net - cost - financialCost);
+    return { ok: true, ...result, cost, financialCost, financialRate: input.financial ?? 0, profit, actualMargin: profit / result.price * 100,
       actualGain: cost > 0 ? profit / cost * 100 : null,
       taxBurden: result.totalTaxes / result.price * 100, retained, exactPrice,
-      breakEven: cost / retained, target: input.margin, mode: input.mode,
+      breakEven: (cost + financialCost) / retained, target: input.margin, mode: input.mode,
       inputBase: input.mode === 'base' ? input.amount : null };
   }
-  const api = { calculate, parse, round, taxes, validate };
+  function promotion(input, minimumGain = 20) {
+    if (!Number.isFinite(minimumGain) || minimumGain < 20 || minimumGain > 10000)
+      return { ok: false, error: 'O mínimo operacional deve ser de pelo menos 20% sobre o custo (até 10.000%).' };
+    const normal = calculate(input);
+    if (!normal.ok) return { ok: false, error: 'Revise a simulação principal antes de calcular a promoção.' };
+    if (normal.cost <= 0) return { ok: false, error: 'Informe um custo líquido positivo para calcular a promoção.' };
+    const floorResult = calculate({ ...input, mode: 'cost', amount: normal.cost, margin: minimumGain });
+    if (!floorResult.ok) return { ok: false, error: 'O piso promocional excede os limites do simulador.' };
+    const discount = round(normal.price - floorResult.price);
+    return { ok: true, ...floorResult, normalPrice: normal.price, minimumGain,
+      canDiscount: discount > 0, belowFloor: normal.price < floorResult.price,
+      discount: Math.max(0, discount), discountPercent: Math.max(0, discount / normal.price * 100) };
+  }
+  const api = { calculate, promotion, parse, round, taxes, validate };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   root.ApoloCalculator = api;
 })(typeof window !== 'undefined' ? window : globalThis);

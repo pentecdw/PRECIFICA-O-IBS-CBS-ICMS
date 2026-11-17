@@ -11,13 +11,13 @@
   const setText = (id, value) => { $(id).textContent = value; };
   function currentInput() {
     return { mode: tab === 'inverse' ? 'inverse' : $('basis').value,
-      amount: calc.parse($('amount').value), price: calc.parse($('price').value),
-      icms: calc.parse($('icms').value), cbs: calc.parse($('cbs').value), ibs: calc.parse($('ibs').value), margin: calc.parse($('margin').value) };
+      amount: calc.parse($('amount').value, true), price: calc.parse($('price').value, true),
+      icms: calc.parse($('icms').value), cbs: calc.parse($('cbs').value), ibs: calc.parse($('ibs').value), margin: calc.parse($('margin').value), financial: calc.parse($('financial').value) };
   }
   function reflectMode() {
     const isInverse = tab === 'inverse';
     const isBase = !isInverse && $('basis').value === 'base';
-    $('margin').disabled = isInverse;
+    $('margin').disabled = false;
     $('basis-field').hidden = isInverse;
     $('price-field').hidden = !isInverse;
     $('price').disabled = !isInverse;
@@ -38,12 +38,13 @@
     const input = currentInput();
     const r = calc.calculate(input);
     lastResult = r;
-    for (const key of ['amount', 'price', 'icms', 'cbs', 'ibs', 'margin']) {
+    for (const key of ['amount', 'price', 'icms', 'cbs', 'ibs', 'margin', 'financial']) {
       const message = r.ok ? '' : r.errors[key] || '';
       $(key).setAttribute('aria-invalid', String(!!message));
       $(key + '-error').hidden = !message;
       setText(key + '-error', message);
     }
+    renderPromotion(input);
     $('invalid').hidden = r.ok;
     $('valid-result').hidden = !r.ok;
     clearTimeout(announceTimer);
@@ -57,12 +58,12 @@
     setText('price-result', money(r.price));
     setText('price-caption', 'Preço com ICMS, CBS e IBS');
     setText('mode-caption', input.mode === 'base' ? 'A partir da base' : input.mode === 'inverse' ? 'Análise da venda' : 'A partir do custo');
-    setText('profit-label', input.mode === 'base' ? 'Sobra no custo máximo' : 'Sobra após custo e tributos');
+    setText('profit-label', input.mode === 'base' ? 'Sobra no custo máximo' : 'Sobra após custo, tributos e financeiro');
     setText('profit-result', money(r.profit));
     setText('cost-caption', (input.mode === 'base' ? 'Custo máximo: ' : 'Custo líquido: ') + money(r.cost));
     const gainText = r.actualGain === null ? 'Não definido (custo zero)' : percent(r.actualGain);
     const gainDetailed = r.actualGain === null ? 'Não definido (custo zero)' : decimal(r.actualGain, 4) + '%';
-    setText('margin-result', r.cost > 0 ? decimal(r.net / r.cost, 4) : 'Não definido (custo zero)');
+    setText('margin-result', r.cost > 0 ? decimal((r.net - r.financialCost) / r.cost, 4) : 'Não definido (custo zero)');
     setText('sale-margin-result', 'Margem sobre a venda: ' + percent(r.actualMargin));
     const met = r.actualGain !== null && r.actualGain + 1e-9 >= r.target;
     setText('target-status', r.actualGain === null ? 'Não é possível comparar a meta com custo zero.' : r.profit < 0 ? 'Venda com prejuízo de ' + money(-r.profit) : 'Meta sobre o custo de ' + percent(r.target) + (met ? ' atendida' : ' não atendida'));
@@ -71,8 +72,12 @@
     setText('burden-result', percent(r.taxBurden) + ' em tributos');
     $('composition-bar').hidden = r.profit < 0;
     $('loss-note').hidden = r.profit >= 0;
-    setText('loss-note', 'Custo e tributos excedem a venda em ' + money(-r.profit) + '.');
+    setText('loss-note', 'Custo, tributos e financeiro excedem a venda em ' + money(-r.profit) + '.');
     const costShare = r.cost / r.price * 100;
+    const financialShare = r.financialCost / r.price * 100;
+    setText('financial-result', money(r.financialCost));
+    setText('financial-share', percent(financialShare));
+    $('financial-bar').style.width = financialShare + '%';
     const normalized = r.profit < 0 ? (r.cost + r.totalTaxes) / r.price * 100 : 100;
     $('cost-bar').style.width = (costShare / normalized * 100) + '%';
     $('tax-bar').style.width = (r.taxBurden / normalized * 100) + '%';
@@ -80,7 +85,7 @@
     setText('cost-share', percent(costShare));
     setText('tax-share', percent(r.taxBurden));
     setText('profit-share', percent(r.actualMargin));
-    $('composition-bar').setAttribute('aria-label', `Custo: ${money(r.cost)} (${percent(costShare)}). Tributos: ${money(r.totalTaxes)} (${percent(r.taxBurden)}). Sobra: ${money(r.profit)} (${percent(r.actualMargin)}).`);
+    $('composition-bar').setAttribute('aria-label', `Custo: ${money(r.cost)} (${percent(costShare)}). Financeiro: ${money(r.financialCost)} (${percent(financialShare)}). Tributos: ${money(r.totalTaxes)} (${percent(r.taxBurden)}). Sobra: ${money(r.profit)} (${percent(r.actualMargin)}).`);
     for (const key of ['icms', 'cbs', 'ibs']) {
       setText(key + '-base', money(key === 'icms' ? r.price : r.base));
       setText(key + '-rate', percent(input[key]));
@@ -96,17 +101,34 @@
         ? `Base informada: ${money(input.amount)}. Preço teórico: R$ ${decimal(r.exactPrice, 4)}. O ajuste ao centavo pode alterar a base. Ganho no custo máximo: ${gainDetailed}.`
         : `Ganho sobre o custo: ${gainDetailed}. Custo, venda e cada tributo são considerados em centavos.`;
     setText('round-note', roundingText);
-    setText('formula-live', `Base CBS/IBS = (${money(r.price)} − ${money(r.icmsValue)}) ÷ (1 + ${decimal(input.cbs / 100, 4)} + ${decimal(input.ibs / 100, 4)}) = R$ ${decimal(r.base, 4)}. Sobra = ${money(r.price)} − ${money(r.icmsValue)} − ${money(r.cbsValue)} − ${money(r.ibsValue)} − ${money(r.cost)} = ${money(r.profit)}. ${r.actualGain === null ? 'Ganho sobre o custo não definido: custo zero.' : `Ganho sobre o custo = ${money(r.profit)} ÷ ${money(r.cost)} × 100 = ${gainDetailed}.`} Margem sobre a venda = ${decimal(r.actualMargin, 4)}%.`);
+    setText('formula-live', `Base CBS/IBS = (${money(r.price)} − ${money(r.icmsValue)}) ÷ (1 + ${decimal(input.cbs / 100, 4)} + ${decimal(input.ibs / 100, 4)}) = R$ ${decimal(r.base, 4)}. Sobra = ${money(r.price)} − ${money(r.icmsValue)} − ${money(r.cbsValue)} − ${money(r.ibsValue)} − ${money(r.cost)} − ${money(r.financialCost)} de financeiro = ${money(r.profit)}. ${r.actualGain === null ? 'Ganho sobre o custo não definido: custo zero.' : `Ganho sobre o custo = ${money(r.profit)} ÷ ${money(r.cost)} × 100 = ${gainDetailed}.`} Margem sobre a venda = ${decimal(r.actualMargin, 4)}%.`);
     announceTimer = setTimeout(() => setText('live-result', `Preço ${money(r.price)}. Sobra ${money(r.profit)}. Ganho sobre o custo: ${gainText}. ${r.actualGain === null ? 'Meta não comparável com custo zero.' : met ? 'Meta atendida.' : 'Meta não atendida.'}`), 600);
     return r;
   }
+  function renderPromotion(input) {
+    const r = calc.promotion(input, calc.parse($('promotion-minimum').value));
+    $('promotion-result').hidden = !r.ok;
+    $('promotion-error').hidden = r.ok;
+    setText('promotion-error', r.ok ? '' : r.error);
+    $('promotion-minimum').setAttribute('aria-invalid', String(!Number.isFinite(calc.parse($('promotion-minimum').value)) || calc.parse($('promotion-minimum').value) < 20));
+    if (!r.ok) return;
+    setText('promotion-price', money(r.price));
+    setText('promotion-discount', r.canDiscount ? money(r.discount) + ' (' + percent(r.discountPercent) + ')' : 'Sem espaço para desconto');
+    setText('promotion-gain', money(r.profit) + ' · ' + percent(r.actualGain) + ' sobre o custo');
+    setText('promotion-status', r.canDiscount
+      ? 'Preço sugerido no piso operacional. Desconto calculado sobre ' + money(r.normalPrice) + '.'
+      : r.belowFloor ? 'O preço atual está abaixo do piso operacional. Aumente para pelo menos ' + money(r.price) + '.'
+      : 'O preço atual já está no piso operacional. Não há desconto disponível mantendo a operação.');
+    setText('promotion-detail', 'Custo ' + money(r.cost) + ' + tributos ' + money(r.totalTaxes) + ' + financeiro ' + money(r.financialCost) + ' + sobra operacional ' + money(r.profit) + '.');
+  }
+  $('promotion-minimum').addEventListener('input', render);
   function setTab(next, focus) {
     tab = next;
     render();
     if (focus) $('tab-' + next).focus();
   }
   function loadExample(name) {
-    $('icms').value = '18'; $('cbs').value = '8,8'; $('ibs').value = '0,1'; $('margin').value = '20';
+    $('icms').value = '18'; $('cbs').value = '8,8'; $('ibs').value = '0,1'; $('margin').value = '20'; $('financial').value = '0'; $('promotion-minimum').value = '20';
     tab = name === 'inverse' ? 'inverse' : 'forward';
     $('basis').value = name === 'base' ? 'base' : 'cost';
     $('amount').value = name === 'base' ? '100,00' : '70,00';
@@ -117,7 +139,7 @@
   $('form-panel').addEventListener('input', render);
   $('basis').addEventListener('change', render);
   for (const key of ['amount', 'price']) $(key).addEventListener('blur', () => {
-    const n = calc.parse($(key).value);
+    const n = calc.parse($(key).value, true);
     if (Number.isFinite(n) && n >= 0 && n <= 1e9) { $(key).value = decimal(calc.round(n)); render(); }
   });
   for (const name of ['forward', 'inverse']) {
@@ -154,6 +176,7 @@
       icms: { type: 'number', description: 'Alíquota percentual de ICMS.' },
       cbs: { type: 'number', description: 'Alíquota percentual de CBS.' },
       ibs: { type: 'number', description: 'Alíquota percentual de IBS.' },
+      financial: { type: 'number', description: 'Custo financeiro estimado do split payment, percentual total sobre o custo líquido da operação, de 0 a 100; padrão zero.' },
       margin: { type: 'number', description: 'Ganho desejado ou meta de comparação, percentual do custo líquido; aceita 100% ou mais.' }
     }, required: ['mode', 'amount', 'icms', 'cbs', 'ibs', 'margin'], additionalProperties: false };
     try {
@@ -167,6 +190,7 @@
           tab = input.mode === 'inverse' ? 'inverse' : 'forward';
           $('basis').value = input.mode === 'base' ? 'base' : 'cost';
           for (const key of ['amount', 'icms', 'cbs', 'ibs', 'margin']) $(key).value = String(input[key]).replace('.', ',');
+          $('financial').value = String(input.financial ?? 0).replace('.', ',');
           if (input.mode === 'inverse') $('price').value = String(input.price).replace('.', ',');
           return render();
         }

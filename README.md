@@ -79,7 +79,7 @@ Nas fórmulas abaixo:
 | `i` | Alíquota de ICMS |
 | `c` | Alíquota de CBS |
 | `b` | Alíquota de IBS |
-| `m` | Margem desejada |
+| `m` | Ganho desejado sobre o custo |
 
 As alíquotas e a margem são expressas em formato decimal: **18% = 0,18**.
 
@@ -92,11 +92,13 @@ CBS = Base CBS/IBS × c
 
 IBS = Base CBS/IBS × b
 
-Preço pelo custo = C ÷ [(1 − i) ÷ (1 + c + b) − m]
+Financeiro = C × taxa financeira, arredondado a centavos
+
+Preço pelo custo = [C × (1 + m) + Financeiro] ÷ [(1 − i) ÷ (1 + c + b)]
 
 Preço pela base = B × (1 + c + b) ÷ (1 − i)
 
-Sobra = P − ICMS − CBS − IBS − C
+Sobra = P − ICMS − CBS − IBS − C − Financeiro
 
 Margem resultante (%) = (Sobra ÷ P) × 100
 ```
@@ -111,8 +113,8 @@ Na formação de preço pelo custo, o preço aplicado é ajustado para cima ao c
 
 Este projeto é uma ferramenta de **simulação e planejamento**, não um sistema de apuração fiscal.
 
-- Considera somente custo líquido, ICMS, CBS, IBS e margem.
-- Não inclui frete, comissões, despesas operacionais ou outros tributos.
+- Considera custo líquido, ICMS, CBS, IBS, ganho sobre custo e custo financeiro estimado.
+- Comissão e despesas operacionais devem estar cobertas pelo ganho sobre custo. Frete de aquisição deve compor o custo quando aplicável. Outros tributos não são apurados.
 - Não determina o enquadramento fiscal por produto, regime ou ano.
 - Alterar as alíquotas não altera as regras de formação das bases.
 - A sobra calculada não representa o lucro líquido contábil da empresa.
@@ -125,3 +127,21 @@ As premissas e referências utilizadas estão disponíveis na própria interface
 Os valores da simulação são processados no navegador. O código apresentado não implementa persistência das simulações nem envio desses valores a um servidor.
 
 A indicação visual de **“Acesso privado”** não implementa autenticação. Caso a aplicação seja publicada para uso restrito, o controle de acesso deve ser configurado na hospedagem ou em uma camada de autenticação.
+
+## Taxa financeira do split payment
+
+Taxa total por operação sobre o custo líquido, de 0% a 100%, padrão 0%. Não é tributo nem tarifa obrigatória do split payment. Informe o efeito financeiro estimado para os prazos de estoque, pagamento e recebimento. Se já estiver incluído no ganho, mantenha zero para não duplicar. O simulador não apura a segregação bancária nem créditos disponíveis.
+
+O ganho e o índice sobre custo são apresentados após descontar o financeiro. A composição separa custo, tributos, financeiro e sobra. Na entrada por base, o custo máximo é ajustado a centavos para preservar o ganho após o financeiro arredondado.
+
+## Promoção
+
+O módulo usa piso operacional de 20% sobre o custo líquido, informado pela empresa. Pode-se aumentar esse percentual, mas não reduzi-lo abaixo de 20%. Calcula o menor preço que preserva o piso após tributos e financeiro; compara com a venda atual e mostra o desconto máximo. Se a venda atual estiver no piso ou abaixo dele, não sugere desconto. A sobra cobre despesas e comissão; não é lucro líquido. O piso é uma premissa de planejamento e depende de custos completos e alíquotas adequadas.
+
+## Entrada de valores
+
+Nos campos monetários, `1.000` significa mil reais e `1.000,00` também. Use vírgula nos decimais. Nos percentuais, ponto ou vírgula são separadores decimais. A meta permanece editável na análise inversa.
+
+## Verificação
+
+Execute `node --test calculator.test.js` para conferir promoções, piso operacional, ganho, custo financeiro e arredondamento.

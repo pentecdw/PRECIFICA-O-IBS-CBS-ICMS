@@ -12,8 +12,8 @@
   <link rel="icon" type="image/svg+xml"
     href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23142643'/%3E%3Cpath d='M7 25 14 7h4l7 18h-5l-1.5-4h-5L12 25zm7.5-8h3l-1.5-5z' fill='%23f7a53a'/%3E%3C/svg%3E">
   <link rel="stylesheet" href="styles.css">
-  <script src="calculator.js?v=indice-custo-2" defer></script>
-  <script src="app.js?v=indice-custo-2" defer></script>
+  <script src="calculator.js?v=financeiro-promocao-3" defer></script>
+  <script src="app.js?v=financeiro-promocao-3" defer></script>
 </head>
 
 <body>
@@ -82,10 +82,15 @@
               <p id="ibs-error" class="field-error" hidden></p>
             </div>
           </div>
+          <div class="field"><label for="financial">Taxa financeira do split payment</label>
+            <div class="input-wrap"><input id="financial" type="text" inputmode="decimal" value="0" aria-describedby="financial-help financial-error"><span>%</span></div>
+            <p id="financial-help" class="help">Percentual total sobre o custo líquido para esta operação, incluindo o efeito dos prazos. Não é alíquota tributária nem tarifa obrigatória. Use 0 se já estiver embutido no ganho.</p>
+            <p id="financial-error" class="field-error" hidden></p>
+          </div>
           <div class="field margin-field"><label id="margin-label" for="margin">Ganho desejado sobre o custo</label>
             <div class="input-wrap"><input id="margin" type="text" inputmode="decimal" value="20"
                 aria-describedby="margin-help margin-error"><span>%</span></div>
-            <p id="margin-help" class="help">Sobra após os tributos e o custo, dividida pelo custo líquido. Ex.: ganho de 20% equivale a um índice de 1,20.</p>
+            <p id="margin-help" class="help">Sobra após os tributos, o custo e a taxa financeira, dividida pelo custo líquido. Esse ganho cobre despesas, comissão e resultado. Ex.: ganho de 20% equivale a um índice de 1,20.</p>
             <p id="margin-error" class="field-error" hidden></p>
           </div>
           <p class="input-note">Os resultados mudam enquanto você digita. Use vírgula para decimais.</p>
@@ -116,11 +121,11 @@
             <h2>Destino do preço de venda</h2><span id="burden-result">24,70% em tributos</span>
           </div>
           <div class="composition-bar" role="img" id="composition-bar" aria-label="Composição do preço"><span
-              id="cost-bar" class="segment cost"></span><span id="tax-bar" class="segment tax"></span><span
+              id="cost-bar" class="segment cost"></span><span id="tax-bar" class="segment tax"></span><span id="financial-bar" class="segment financial"></span><span
               id="profit-bar" class="segment profit"></span></div>
           <p id="loss-note" hidden></p>
           <div class="composition-legend"><span><i class="cost"></i>Custo <b id="cost-share"></b></span><span><i
-                class="tax"></i>Tributos <b id="tax-share"></b></span><span><i class="profit"></i>Sobra <b
+                class="tax"></i>Tributos <b id="tax-share"></b></span><span><i class="financial"></i>Financeiro <b id="financial-share"></b></span><span><i class="profit"></i>Sobra <b
                 id="profit-share"></b></span></div>
           <div class="detail-heading">
             <h2>Bases e tributos</h2><span>Por unidade</span>
@@ -163,6 +168,7 @@
               </tfoot>
             </table>
           </div>
+          <div class="reconciliation"><span>Custo financeiro estimado do split payment</span><strong id="financial-result"></strong></div>
           <div class="reconciliation"><span>Receita após os três tributos</span><strong id="net-result"></strong></div>
           <div id="base-cost-note" class="base-cost-note" hidden><span>Custo líquido máximo para a meta</span><strong
               id="max-cost-result"></strong>
@@ -174,6 +180,21 @@
         <p id="live-result" class="sr-only" role="status" aria-live="polite" aria-atomic="true"></p>
       </section>
     </div>
+    <section class="promotion-panel" aria-labelledby="promotion-title">
+      <p class="eyebrow">PROMOÇÃO COM PISO OPERACIONAL</p>
+      <h2 id="promotion-title">Até quanto posso baixar o preço?</h2>
+      <p>O piso preserva pelo menos 20% de ganho sobre o custo líquido após os tributos e o financeiro, conforme o mínimo operacional informado pela empresa. A sobra cobre despesas e comissão; não é lucro líquido.</p>
+      <div class="field"><label for="promotion-minimum">Mínimo para manter a operação</label>
+        <div class="input-wrap"><input id="promotion-minimum" type="text" inputmode="decimal" value="20" aria-describedby="promotion-help promotion-error"><span>% sobre o custo</span></div>
+        <p id="promotion-help" class="help">Piso de 20%. Aumente se a operação exigir mais. A taxa financeira é acrescentada separadamente.</p>
+      </div>
+      <p id="promotion-error" class="field-error" role="status" hidden></p>
+      <div id="promotion-result" aria-live="polite">
+        <div class="promotion-metrics"><div><span>Preço mínimo sugerido</span><strong id="promotion-price"></strong></div><div><span>Desconto máximo sobre o preço atual</span><strong id="promotion-discount"></strong></div><div><span>Sobra para manter a operação</span><strong id="promotion-gain"></strong></div></div>
+        <p id="promotion-status"></p><p id="promotion-detail" class="help"></p>
+      </div>
+      <p class="help">Estimativa condicionada aos custos e às alíquotas informados. Frete ou outros custos da promoção devem estar contemplados nas premissas. Não publica nem aplica descontos automaticamente.</p>
+    </section>
     <section class="support-section" aria-labelledby="examples-title">
       <div class="section-heading">
         <div>
@@ -218,7 +239,7 @@
               </div>
               <div>
                 <dt>Preço pelo custo</dt>
-                <dd>Custo × (1 + ganho) ÷ [(1 − ICMS) ÷ (1 + CBS + IBS)]</dd>
+                <dd>(Custo × (1 + ganho) + financeiro) ÷ [(1 − ICMS) ÷ (1 + CBS + IBS)]</dd>
               </div>
               <div>
                 <dt>Preço pela base</dt>
@@ -226,7 +247,7 @@
               </div>
               <div>
                 <dt>Sobra</dt>
-                <dd>Preço − ICMS − CBS − IBS − custo líquido</dd>
+                <dd>Preço − ICMS − CBS − IBS − custo líquido − financeiro</dd>
               </div>
               <div>
                 <dt>Ganho sobre o custo (%)</dt>
@@ -234,7 +255,7 @@
               </div>
               <div>
                 <dt>Custo máximo para a meta</dt>
-                <dd>Receita após tributos ÷ (1 + ganho), arredondada para baixo a centavos</dd>
+                <dd>Receita após tributos ÷ (1 + ganho + taxa financeira), com ajuste para baixo a centavos</dd>
               </div>
               <div>
                 <dt>Margem sobre a venda (%)</dt>
@@ -251,7 +272,7 @@
         <details>
           <summary>Premissas e regra de transição <span aria-hidden="true">+</span></summary>
           <div class="details-body">
-            <p>Este módulo simula somente custo líquido, ICMS, CBS, IBS e ganho sobre o custo. Comissão, frete, PIS/COFINS, IPI, substituição tributária, IRPJ, CSLL e despesas operacionais não entram no cálculo. O ganho sobre o custo usa a sobra após custo e os três tributos simulados; não representa o lucro líquido contábil da empresa.</p>
+            <p>Este módulo simula custo líquido, ICMS, CBS, IBS, custo financeiro e ganho sobre o custo. Despesas operacionais e comissão devem estar cobertas pelo ganho informado. Frete de aquisição deve compor o custo quando aplicável. PIS/COFINS, IPI, substituição tributária, IRPJ e CSLL não são apurados. A sobra não representa lucro líquido contábil. A taxa financeira é uma estimativa sobre o custo para todo o ciclo da operação; não calcula o valor efetivamente segregado pelo split payment nem a utilização de créditos. O piso promocional de 20% é uma premissa da empresa, não uma garantia de cobertura de despesas não informadas.</p>
             <p>O custo deve estar líquido dos créditos recuperáveis de aquisição. O site não calcula créditos nem reduz
               o custo novamente.</p>
             <p>O modelo pressupõe operação tributada normal e inclui CBS/IBS efetivamente exigíveis na base do ICMS. Não
