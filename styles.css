@@ -1334,3 +1334,53 @@ footer b {
 .promotion-metrics span { display: block; font-size: 13px; color: var(--muted); margin-bottom: 8px; }
 .promotion-metrics strong { display: block; font-size: 21px; color: var(--ink); }
 @media(max-width: 760px) { .promotion-metrics { grid-template-columns: 1fr; } .promotion-panel { padding: 18px; } }
+
+/* Identidade Apolo + Viví Guará: logos originais, sem distorção. */
+:root { --ink: #16372b; --muted: #5d7169; --line: #dce8e1; --surface: #f3f7f4; --blue: #006514; --green: #006514; --orange: #09c4df; }
+body { background: radial-gradient(ellipse at 95% 0%, #dff5f5 0%, transparent 36%), var(--surface); }
+.topbar { height: auto; min-height: 112px; gap: 30px; border-top: 4px solid #006514; box-shadow: 0 3px 20px #16372b06; }
+.brand-pair { display: inline-flex; align-items: center; gap: 20px; flex-shrink: 0; text-decoration: none; padding: 12px 0; }
+.apolo-logo { display: block; width: 154px; height: auto; }
+.brand-divider { height: 44px; width: 1px; background: var(--line); }
+.vivi-logo-frame { display: inline-flex; align-items: center; justify-content: center; width: 90px; height: 80px; border-radius: 10px; overflow: hidden; background: #231a16; }
+.vivi-logo { display: block; width: 100%; height: 100%; object-fit: contain; }
+.tool-name { max-width: 190px; font-size: 11px; letter-spacing: 1.5px; line-height: 1.8; }
+.access-tag { font-size: 12px; }
+.heading-description { margin-top: 10px; font-size: 14px; color: var(--muted); }
+h1 { font-size: clamp(1.8rem, 3vw, 2.6rem); }
+h1 span { color: #006514; }
+.page-heading { padding: 12px 0 6px; }
+.price-card { background: linear-gradient(125deg, #004a1d, #143d32 75%, #164b48); border-left-color: #09c4df; box-shadow: 0 12px 24px #00651415; }
+.price-card-heading, .price-card-footer { color: #e0eee5; }
+.price-card-footer span:last-child { color: #60e3f2; }
+.mode-tab.active { color: #006514; border-color: #006514; }
+.scenario-pill { background: #e5f2e9; color: #006514; border-color: #cbe2d2; }
+a { color: #006514; }
+.promotion-panel { border-top: 4px solid #09c4df; background: linear-gradient(115deg, #fff 55%, #f0fbfc); box-shadow: 0 6px 24px #16372b05; }
+.promotion-metrics > div { padding: 16px; border-radius: 9px; background: #fff; border: 1px solid var(--line); }
+.promotion-metrics > div:first-child { border-color: #b8dfc2; background: #f1f9f3; }
+.promotion-metrics > div:first-child strong { color: #006514; font-size: 28px; }
+.branded-footer { align-items: center; padding-top: 24px; }
+.footer-brands { display: flex; gap: 18px; align-items: center; }
+.footer-apolo { width: 108px; height: auto; }
+.footer-vivi { width: 64px; height: 58px; border-radius: 7px; }
+.branded-footer strong, .branded-footer > div > span { display: block; }
+.branded-footer strong { color: var(--ink); margin-bottom: 4px; }
+.footer-local { margin-left: auto; }
+@media(max-width: 980px) { .topbar { gap: 20px; } }
+@media(max-width: 760px) {
+  .topbar { padding: 0 18px; min-height: 96px; gap: 12px; flex-wrap: wrap; }
+  .brand-pair { gap: 12px; padding: 10px 0; }
+  .apolo-logo { width: 120px; }
+  .vivi-logo-frame { width: 72px; height: 66px; }
+  .access-tag { margin-left: auto; font-size: 11px; }
+  .page-heading { align-items: flex-start; flex-direction: column; }
+  .page-heading .eyebrow { font-size: 10px; letter-spacing: 1px; }
+  .branded-footer { align-items: flex-start; gap: 16px; }
+  .footer-vivi { width: 64px; height: 58px; }
+  .footer-local { margin-left: 0; }
+}
+@media(max-width: 380px) { .topbar .access-tag { display: none; } .brand-pair { gap: 16px; } }
+@media print { .topbar { min-height: 90px; } .brand-pair { padding: 0; } .apolo-logo { width: 120px; } .vivi-logo-frame { width: 65px; height: 65px; } .price-card { background: #f1f8f3; color: #16372b; box-shadow: none; } .price-card-heading, .price-card-footer, .price-card-footer span:last-child { color: #16372b; } }
+.mode-tab.active { color: #fff; background: #006514; }
+.workspace > *, .page-heading > *, .promotion-metrics > * { min-width: 0; } @media(max-width:760px) { .workspace { grid-template-columns: minmax(0,1fr); } .topbar { max-width: 100%; } .heading-description { overflow-wrap: anywhere; } }

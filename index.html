@@ -7,11 +7,13 @@
   <meta name="color-scheme" content="light">
   <meta name="robots" content="noindex,nofollow">
   <meta name="description"
-    content="Precificador privado da Apolo Distribuidora: custo líquido, bases tributárias CBS/IBS, preço de venda e ganho sobre o custo.">
-  <title>Precificador CBS/IBS | Apolo Distribuidora</title>
-  <link rel="icon" type="image/svg+xml"
-    href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23142643'/%3E%3Cpath d='M7 25 14 7h4l7 18h-5l-1.5-4h-5L12 25zm7.5-8h3l-1.5-5z' fill='%23f7a53a'/%3E%3C/svg%3E">
-  <link rel="stylesheet" href="styles.css">
+    content="Precificador da Apolo Distribuidora e Viví Guará: custo líquido, bases tributárias CBS/IBS, preço de venda e ganho sobre o custo.">
+  <title>Precificador | Apolo & Viví Guará</title>
+  <meta name="theme-color" content="#006514">
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg?v=marcas-1">
+  <link rel="alternate icon" type="image/png" href="assets/apolo-site.png">
+  <link rel="apple-touch-icon" href="assets/apolo-site.png">
+  <link rel="stylesheet" href="styles.css?v=marcas-1">
   <script src="calculator.js?v=financeiro-promocao-3" defer></script>
   <script src="app.js?v=financeiro-promocao-3" defer></script>
 </head>
@@ -19,8 +21,11 @@
 <body>
   <a href="#main" class="skip-link">Ir para o precificador</a>
   <header class="topbar">
-    <div class="brand"><span class="brand-mark" aria-hidden="true">A</span><span class="brand-name">APOLO
-        <small>DISTRIBUIDORA</small></span></div>
+    <a class="brand-pair" href="#main" aria-label="Apolo Distribuidora e Viví Guará — início">
+      <img class="apolo-logo" src="assets/apolo-site.png" alt="Apolo Distribuidora de Cosméticos" width="3125" height="1648">
+      <span class="brand-divider" aria-hidden="true"></span>
+      <span class="vivi-logo-frame"><img class="vivi-logo" src="assets/vivi-guara-cosmeticos.jpg" alt="Viví Guará Cosméticos" width="4167" height="4167"></span>
+    </a>
     <div class="tool-name">GESTÃO COMERCIAL <span>/</span> PRECIFICAÇÃO</div>
     <div class="access-tag"><svg viewBox="0 0 24 24" aria-hidden="true">
         <path d="M7 10V7a5 5 0 0 1 10 0v3M6 10h12v11H6z" />
@@ -29,8 +34,8 @@
   <main id="main">
     <div class="page-heading">
       <div>
-        <p class="eyebrow">CUSTO · TRIBUTOS · GANHO</p>
-        <h1>Precificador <span>CBS/IBS</span></h1>
+        <p class="eyebrow">APOLO + VIVÍ GUARÁ · GESTÃO COMERCIAL</p>
+        <h1>Seu preço. <span>Seu resultado.</span></h1><p class="heading-description">Precificação ICMS, CBS e IBS com visão de ganho e promoção.</p>
       </div><span class="scenario-pill">Cenário de planejamento</span>
     </div>
     <div class="workspace">
@@ -181,7 +186,7 @@
       </section>
     </div>
     <section class="promotion-panel" aria-labelledby="promotion-title">
-      <p class="eyebrow">PROMOÇÃO COM PISO OPERACIONAL</p>
+      <p class="eyebrow">APOLO + VIVÍ GUARÁ · PROMOÇÃO COM PISO OPERACIONAL</p>
       <h2 id="promotion-title">Até quanto posso baixar o preço?</h2>
       <p>O piso preserva pelo menos 20% de ganho sobre o custo líquido após os tributos e o financeiro, conforme o mínimo operacional informado pela empresa. A sobra cobre despesas e comissão; não é lucro líquido.</p>
       <div class="field"><label for="promotion-minimum">Mínimo para manter a operação</label>
@@ -294,7 +299,11 @@
     <aside class="planning-note"><strong>Cenário, não alíquota vigente de 2026.</strong><span>O padrão 18% / 8,8% / 0,1%
         segue a simulação Apolo. Consulte as premissas antes de aplicar ao cadastro fiscal.</span></aside>
   </main>
-  <footer><span>APOLO DISTRIBUIDORA <b>·</b> Precificação CBS/IBS</span><span>Cálculos no seu navegador</span></footer>
+  <footer class="branded-footer">
+    <div class="footer-brands"><img class="footer-apolo" src="assets/apolo-site.png" alt="Apolo Distribuidora" width="3125" height="1648" loading="lazy"><span class="vivi-logo-frame footer-vivi"><img class="vivi-logo" src="assets/vivi-guara-cosmeticos.jpg" alt="Viví Guará Cosméticos" width="4167" height="4167" loading="lazy"></span></div>
+    <div><strong>Apolo &amp; Viví Guará</strong><span>Gestão de preços com clareza.</span></div>
+    <span class="footer-local">Cálculos no seu navegador</span>
+  </footer>
   <noscript>
     <p class="noscript">Ative o JavaScript para utilizar o precificador.</p>
   </noscript>
