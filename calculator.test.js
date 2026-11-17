@@ -29,24 +29,6 @@ test('zero fee preserves previous results and monetary parsing handles grouping'
   assert.ok(Number.isNaN(calc.parse('1.00.0', true)));
 });
 
-test('promotion preserves 20% floor and warns when there is no room', () => {
-  const p = calc.promotion(scenario);
-  assert.ok(p.ok && p.canDiscount);
-  assert.ok(p.profit >= 20);
-  assert.equal(p.financialCost, 2);
-  assert.equal(p.discount, calc.round(p.normalPrice - p.price));
-  const below = calc.calculate({ ...scenario, mode: 'inverse', price: calc.round(p.price - .10) });
-  assert.ok(below.profit < 20);
-  const atFloor = calc.promotion({ ...scenario, margin: 20 });
-  assert.equal(atFloor.canDiscount, false);
-  const loss = calc.promotion({ ...scenario, mode: 'inverse', price: 50 });
-  assert.ok(loss.belowFloor);
-  assert.equal(loss.discount, 0);
-  assert.equal(calc.promotion(scenario, 19).ok, false);
-  assert.equal(calc.promotion(scenario, NaN).ok, false);
-  assert.equal(calc.promotion({ ...scenario, mode: 'inverse', amount: 0, price: 150 }).ok, false);
-});
-
 test('5000 scenarios preserve target after financial and tax rounding', () => {
   for (let k = 0; k < 5000; k++) {
     const input = { ...scenario, amount: (1 + k * 37 % 100000) / 100, icms: k % 26, cbs: k % 11, ibs: k % 8, margin: k % 151, financial: (k % 501) / 100 };
@@ -60,7 +42,7 @@ test('5000 scenarios preserve target after financial and tax rounding', () => {
   }
 });
 
-test('interface initializes, recalculates financial and promotion, and allows editing inverse target', () => {
+test('interface initializes with one real, resets defaults and allows editing inverse target', () => {
   const html = fs.readFileSync(__dirname + '/index.html', 'utf8');
   const elements = {};
   for (const match of html.matchAll(/<[^>]*\bid="([^"]+)"[^>]*>/g)) {
@@ -75,17 +57,19 @@ test('interface initializes, recalculates financial and promotion, and allows ed
     querySelectorAll() { return []; }
   }, setTimeout() { return 0; }, clearTimeout() {}, console };
   vm.runInNewContext(fs.readFileSync(__dirname + '/app.js', 'utf8'), context);
-  assert.match(elements['price-result'].textContent, /112,49/);
+  assert.equal(elements.amount.value, '1,00');
+  assert.equal(elements.icms.value, '18');
+  assert.equal(elements.cbs.value, '8,8');
+  assert.equal(elements.ibs.value, '0,1');
+  assert.equal(elements['promotion-minimum'], undefined);
+  assert.equal(elements['examples-title'], undefined);
   assert.equal(elements.financial.value, '1');
-  assert.match(elements['financial-result'].textContent, /0,70/);
+  assert.match(elements['financial-result'].textContent, /0,01/);
+  elements.amount.value = '70,00';
   elements.financial.value = '2';
   elements.margin.value = '35';
   elements['form-panel'].events.input();
   assert.match(elements['financial-result'].textContent, /1,40/);
-  assert.match(elements['promotion-discount'].textContent, /%/);
-  elements['promotion-minimum'].value = '19';
-  elements['promotion-minimum'].events.input();
-  assert.equal(elements['promotion-result'].hidden, true);
   elements['tab-inverse'].events.click();
   assert.equal(elements.margin.disabled, false);
   elements.margin.value = '';
@@ -93,5 +77,10 @@ test('interface initializes, recalculates financial and promotion, and allows ed
   assert.equal(elements['valid-result'].hidden, true);
   elements.margin.value = '20';
   elements['form-panel'].events.input();
+  assert.equal(elements['valid-result'].hidden, false);
+  elements['reset'].events.click();
+  assert.equal(elements.amount.value, '1,00');
+  assert.equal(elements.financial.value, '1');
+  assert.equal(elements.margin.value, '20');
   assert.equal(elements['valid-result'].hidden, false);
 });

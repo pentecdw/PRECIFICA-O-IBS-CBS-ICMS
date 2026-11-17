@@ -14,8 +14,8 @@
   <link rel="alternate icon" type="image/png" href="assets/apolo-site.png">
   <link rel="apple-touch-icon" href="assets/apolo-site.png">
   <link rel="stylesheet" href="styles.css?v=marcas-1">
-  <script src="calculator.js?v=financeiro-padrao1-4" defer></script>
-  <script src="app.js?v=financeiro-padrao1-4" defer></script>
+  <script src="calculator.js?v=analise-5" defer></script>
+  <script src="app.js?v=analise-5" defer></script>
 </head>
 
 <body>
@@ -35,7 +35,7 @@
     <div class="page-heading">
       <div>
         <p class="eyebrow">APOLO + VIVÍ GUARÁ · GESTÃO COMERCIAL</p>
-        <h1>Seu preço. <span>Seu resultado.</span></h1><p class="heading-description">Precificação ICMS, CBS e IBS com visão de ganho e promoção.</p>
+        <h1>Seu preço. <span>Seu resultado.</span></h1><p class="heading-description">Precificação ICMS, CBS e IBS para análise de ganho e decisão comercial.</p>
       </div><span class="scenario-pill">Cenário de planejamento</span>
     </div>
     <div class="workspace">
@@ -57,14 +57,14 @@
             </select></div>
           <div class="field amount-field"><label id="amount-label" for="amount">Custo líquido</label>
             <div class="input-wrap"><span>R$</span><input id="amount" name="amount" type="text" inputmode="decimal"
-                value="70,00" autocomplete="off" aria-describedby="amount-help amount-error"></div>
+                value="1,00" autocomplete="off" aria-describedby="amount-help amount-error"></div>
             <p id="amount-help" class="help">Aquisição menos créditos recuperáveis. Se o ERP já descontou os créditos,
               use o custo líquido informado.</p>
             <p id="amount-error" class="field-error" hidden></p>
           </div>
           <div id="price-field" class="field" hidden><label for="price">Preço de venda final</label>
             <div class="input-wrap"><span>R$</span><input id="price" name="price" type="text" inputmode="decimal"
-                value="111,56" autocomplete="off" aria-describedby="price-error"></div>
+                value="1,00" autocomplete="off" aria-describedby="price-error"></div>
             <p id="price-error" class="field-error" hidden></p>
           </div>
           <div class="rates-heading">
@@ -112,15 +112,15 @@
           <div class="price-card">
             <div class="price-card-heading"><span id="result-title">Preço de venda sugerido</span><span
                 class="card-symbol" aria-hidden="true">R$</span></div>
-            <div id="price-result" class="price-result">R$ 112,49</div>
+            <div id="price-result" class="price-result">R$ 1,61</div>
             <div class="price-card-footer"><span id="price-caption">Preço com ICMS, CBS e IBS</span><span
                 id="mode-caption">A partir do custo</span></div>
           </div>
           <div class="metrics">
             <div class="metric"><span id="profit-label">Sobra após custo e tributos</span><strong id="profit-result">R$
-                14,01</strong><small id="cost-caption">Custo líquido: R$ 70,00</small></div>
+                0,20</strong><small id="cost-caption">Custo líquido: R$ 1,00</small></div>
             <div class="metric margin-metric"><span>Índice sobre o custo</span><strong
-                id="margin-result">1,2001</strong><small id="target-status">Meta sobre o custo de 20,00% atendida</small><small id="sale-margin-result">Margem sobre a venda: 12,56%</small></div>
+                id="margin-result">1,2000</strong><small id="target-status">Meta sobre o custo de 20,00% atendida</small><small id="sale-margin-result">Margem sobre a venda: 12,42%</small></div>
           </div>
           <div class="composition-heading">
             <h2>Destino do preço de venda</h2><span id="burden-result">24,70% em tributos</span>
@@ -185,40 +185,6 @@
         <p id="live-result" class="sr-only" role="status" aria-live="polite" aria-atomic="true"></p>
       </section>
     </div>
-    <section class="promotion-panel" aria-labelledby="promotion-title">
-      <p class="eyebrow">APOLO + VIVÍ GUARÁ · PROMOÇÃO COM PISO OPERACIONAL</p>
-      <h2 id="promotion-title">Até quanto posso baixar o preço?</h2>
-      <p>O piso preserva pelo menos 20% de ganho sobre o custo líquido após os tributos e o financeiro, conforme o mínimo operacional informado pela empresa. A sobra cobre despesas e comissão; não é lucro líquido.</p>
-      <div class="field"><label for="promotion-minimum">Mínimo para manter a operação</label>
-        <div class="input-wrap"><input id="promotion-minimum" type="text" inputmode="decimal" value="20" aria-describedby="promotion-help promotion-error"><span>% sobre o custo</span></div>
-        <p id="promotion-help" class="help">Piso de 20%. Aumente se a operação exigir mais. A taxa financeira é acrescentada separadamente.</p>
-      </div>
-      <p id="promotion-error" class="field-error" role="status" hidden></p>
-      <div id="promotion-result" aria-live="polite">
-        <div class="promotion-metrics"><div><span>Preço mínimo sugerido</span><strong id="promotion-price"></strong></div><div><span>Desconto máximo sobre o preço atual</span><strong id="promotion-discount"></strong></div><div><span>Sobra para manter a operação</span><strong id="promotion-gain"></strong></div></div>
-        <p id="promotion-status"></p><p id="promotion-detail" class="help"></p>
-      </div>
-      <p class="help">Estimativa condicionada aos custos e às alíquotas informados. Frete ou outros custos da promoção devem estar contemplados nas premissas. Não publica nem aplica descontos automaticamente.</p>
-    </section>
-    <section class="support-section" aria-labelledby="examples-title">
-      <div class="section-heading">
-        <div>
-          <p class="eyebrow">CONFIRA NA PRÁTICA</p>
-          <h2 id="examples-title">Exemplos validados</h2>
-        </div><span class="example-rates">ICMS 18% · CBS 8,8% · IBS 0,1%</span>
-      </div>
-      <div class="example-grid">
-        <button type="button" class="example" data-example="cost"><span class="example-number">01</span><span
-            class="example-content"><strong>Formar preço</strong><span>Custo R$ 70,00 · Ganho 20% · Financeiro 1%</span><b
-              id="example-cost-result">Venda R$ 112,49</b><small>Carregar exemplo</small></span></button>
-        <button type="button" class="example" data-example="inverse"><span class="example-number">02</span><span
-            class="example-content"><strong>Analisar uma venda</strong><span>Custo R$ 70,00 · Venda R$ 150,00</span><b
-              id="example-inverse-result"></b><small>Carregar exemplo</small></span></button>
-        <button type="button" class="example" data-example="base"><span class="example-number">03</span><span
-            class="example-content"><strong>Partir da base</strong><span>Base R$ 100,00 · Ganho sobre o custo 20%</span><b
-              id="example-base-result"></b><small>Carregar exemplo</small></span></button>
-      </div>
-    </section>
     <section class="method-section" aria-labelledby="method-title">
       <div class="method-intro">
         <p class="eyebrow">MEMÓRIA DE CÁLCULO</p>
@@ -277,7 +243,7 @@
         <details>
           <summary>Premissas e regra de transição <span aria-hidden="true">+</span></summary>
           <div class="details-body">
-            <p>Este módulo simula custo líquido, ICMS, CBS, IBS, custo financeiro e ganho sobre o custo. Despesas operacionais e comissão devem estar cobertas pelo ganho informado. Frete de aquisição deve compor o custo quando aplicável. PIS/COFINS, IPI, substituição tributária, IRPJ e CSLL não são apurados. A sobra não representa lucro líquido contábil. A taxa financeira é uma estimativa sobre o custo para todo o ciclo da operação; não calcula o valor efetivamente segregado pelo split payment nem a utilização de créditos. O piso promocional de 20% é uma premissa da empresa, não uma garantia de cobertura de despesas não informadas.</p>
+            <p>Este módulo simula custo líquido, ICMS, CBS, IBS, custo financeiro e ganho sobre o custo. Despesas operacionais e comissão devem estar cobertas pelo ganho informado. Frete de aquisição deve compor o custo quando aplicável. PIS/COFINS, IPI, substituição tributária, IRPJ e CSLL não são apurados. A sobra não representa lucro líquido contábil. A taxa financeira é uma estimativa sobre o custo para todo o ciclo da operação; não calcula o valor efetivamente segregado pelo split payment nem a utilização de créditos. O ganho é definido livremente pelo gestor; o sistema não impõe piso operacional.</p>
             <p>O custo deve estar líquido dos créditos recuperáveis de aquisição. O site não calcula créditos nem reduz
               o custo novamente.</p>
             <p>O modelo pressupõe operação tributada normal e inclui CBS/IBS efetivamente exigíveis na base do ICMS. Não

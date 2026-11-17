@@ -44,7 +44,6 @@
       $(key + '-error').hidden = !message;
       setText(key + '-error', message);
     }
-    renderPromotion(input);
     $('invalid').hidden = r.ok;
     $('valid-result').hidden = !r.ok;
     clearTimeout(announceTimer);
@@ -105,34 +104,21 @@
     announceTimer = setTimeout(() => setText('live-result', `Preço ${money(r.price)}. Sobra ${money(r.profit)}. Ganho sobre o custo: ${gainText}. ${r.actualGain === null ? 'Meta não comparável com custo zero.' : met ? 'Meta atendida.' : 'Meta não atendida.'}`), 600);
     return r;
   }
-  function renderPromotion(input) {
-    const r = calc.promotion(input, calc.parse($('promotion-minimum').value));
-    $('promotion-result').hidden = !r.ok;
-    $('promotion-error').hidden = r.ok;
-    setText('promotion-error', r.ok ? '' : r.error);
-    $('promotion-minimum').setAttribute('aria-invalid', String(!Number.isFinite(calc.parse($('promotion-minimum').value)) || calc.parse($('promotion-minimum').value) < 20));
-    if (!r.ok) return;
-    setText('promotion-price', money(r.price));
-    setText('promotion-discount', r.canDiscount ? money(r.discount) + ' (' + percent(r.discountPercent) + ')' : 'Sem espaço para desconto');
-    setText('promotion-gain', money(r.profit) + ' · ' + percent(r.actualGain) + ' sobre o custo');
-    setText('promotion-status', r.canDiscount
-      ? 'Preço sugerido no piso operacional. Desconto calculado sobre ' + money(r.normalPrice) + '.'
-      : r.belowFloor ? 'O preço atual está abaixo do piso operacional. Aumente para pelo menos ' + money(r.price) + '.'
-      : 'O preço atual já está no piso operacional. Não há desconto disponível mantendo a operação.');
-    setText('promotion-detail', 'Custo ' + money(r.cost) + ' + tributos ' + money(r.totalTaxes) + ' + financeiro ' + money(r.financialCost) + ' + sobra operacional ' + money(r.profit) + '.');
-  }
-  $('promotion-minimum').addEventListener('input', render);
   function setTab(next, focus) {
     tab = next;
     render();
     if (focus) $('tab-' + next).focus();
   }
-  function loadExample(name) {
-    $('icms').value = '18'; $('cbs').value = '8,8'; $('ibs').value = '0,1'; $('margin').value = '20'; $('financial').value = '1'; $('promotion-minimum').value = '20';
-    tab = name === 'inverse' ? 'inverse' : 'forward';
-    $('basis').value = name === 'base' ? 'base' : 'cost';
-    $('amount').value = name === 'base' ? '100,00' : '70,00';
-    $('price').value = name === 'inverse' ? '150,00' : '111,56';
+  function resetDefaults() {
+    tab = 'forward';
+    $('basis').value = 'cost';
+    $('amount').value = '1,00';
+    $('price').value = '1,00';
+    $('icms').value = '18';
+    $('cbs').value = '8,8';
+    $('ibs').value = '0,1';
+    $('margin').value = '20';
+    $('financial').value = '1';
     render();
   }
   $('form-panel').addEventListener('submit', e => e.preventDefault());
@@ -151,21 +137,9 @@
       }
     });
   }
-  $('reset').addEventListener('click', () => { loadExample('cost'); $('price').value = '111,56'; });
-  document.querySelectorAll('[data-example]').forEach(button => button.addEventListener('click', () => {
-    loadExample(button.dataset.example);
-    $('amount').focus({ preventScroll: true });
-    $('simulation-title').scrollIntoView({ behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth', block: 'start' });
-  }));
-  const scenario = { icms: 18, cbs: 8.8, ibs: .1, margin: 20, financial: 1 };
-  const exampleCost = calc.calculate({ ...scenario, mode: 'cost', amount: 70 });
-  setText('example-cost-result', 'Venda ' + money(exampleCost.price));
-  const exampleInverse = calc.calculate({ ...scenario, mode: 'inverse', amount: 70, price: 150 });
-  const exampleBase = calc.calculate({ ...scenario, mode: 'base', amount: 100 });
-  setText('example-inverse-result', 'Ganho sobre o custo ' + percent(exampleInverse.actualGain));
-  setText('example-base-result', 'Venda ' + money(exampleBase.price));
+  $('reset').addEventListener('click', resetDefaults);
   render();
-  
+
   const context = document.modelContext;
   if (context && typeof context.registerTool === 'function') {
     const lifetime = new AbortController();

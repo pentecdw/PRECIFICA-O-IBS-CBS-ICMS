@@ -80,20 +80,7 @@
       breakEven: (cost + financialCost) / retained, target: input.margin, mode: input.mode,
       inputBase: input.mode === 'base' ? input.amount : null };
   }
-  function promotion(input, minimumGain = 20) {
-    if (!Number.isFinite(minimumGain) || minimumGain < 20 || minimumGain > 10000)
-      return { ok: false, error: 'O mínimo operacional deve ser de pelo menos 20% sobre o custo (até 10.000%).' };
-    const normal = calculate(input);
-    if (!normal.ok) return { ok: false, error: 'Revise a simulação principal antes de calcular a promoção.' };
-    if (normal.cost <= 0) return { ok: false, error: 'Informe um custo líquido positivo para calcular a promoção.' };
-    const floorResult = calculate({ ...input, mode: 'cost', amount: normal.cost, margin: minimumGain });
-    if (!floorResult.ok) return { ok: false, error: 'O piso promocional excede os limites do simulador.' };
-    const discount = round(normal.price - floorResult.price);
-    return { ok: true, ...floorResult, normalPrice: normal.price, minimumGain,
-      canDiscount: discount > 0, belowFloor: normal.price < floorResult.price,
-      discount: Math.max(0, discount), discountPercent: Math.max(0, discount / normal.price * 100) };
-  }
-  const api = { calculate, promotion, parse, round, taxes, validate };
+  const api = { calculate, parse, round, taxes, validate };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   root.ApoloCalculator = api;
 })(typeof window !== 'undefined' ? window : globalThis);

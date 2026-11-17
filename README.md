@@ -14,7 +14,7 @@ Os cálculos são executados diretamente no navegador, com atualização dos res
 - Visualização da composição do preço entre custo, tributos e sobra.
 - Comparação da margem resultante com a meta informada.
 - Indicação de vendas com prejuízo.
-- Exemplos de simulação e restauração dos valores padrão.
+- Restauração dos valores padrão: custo R$ 1,00, ICMS 18%, CBS 8,8%, IBS 0,1%, financeiro 1% e ganho editável de 20%.
 - Memória de cálculo com fórmulas e critérios de arredondamento.
 
 ## Tecnologias
@@ -134,9 +134,9 @@ Taxa total por operação sobre o custo líquido, de 0% a 100%, padrão 1%. Não
 
 O ganho e o índice sobre custo são apresentados após descontar o financeiro. A composição separa custo, tributos, financeiro e sobra. Na entrada por base, o custo máximo é ajustado a centavos para preservar o ganho após o financeiro arredondado.
 
-## Promoção
+## Análise comercial
 
-O módulo usa piso operacional de 20% sobre o custo líquido, informado pela empresa. Pode-se aumentar esse percentual, mas não reduzi-lo abaixo de 20%. Calcula o menor preço que preserva o piso após tributos e financeiro; compara com a venda atual e mostra o desconto máximo. Se a venda atual estiver no piso ou abaixo dele, não sugere desconto. A sobra cobre despesas e comissão; não é lucro líquido. O piso é uma premissa de planejamento e depende de custos completos e alíquotas adequadas.
+Não há exemplos práticos nem módulo de piso promocional. O gestor informa o ganho desejado sobre o custo e avalia o resultado; não é imposto um mínimo operacional. O ganho inicial de 20% é editável e pode ser reduzido a zero. A decisão sobre a cobertura das despesas cabe ao gestor.
 
 ## Entrada de valores
 
@@ -144,6 +144,6 @@ Nos campos monetários, `1.000` significa mil reais e `1.000,00` também. Use v�
 
 ## Verificação
 
-Execute `node --test calculator.test.js` para conferir promoções, piso operacional, ganho, custo financeiro e arredondamento.
+Execute `node --test calculator.test.js` para conferir valores padrão, ganho, custo financeiro, análise inversa e arredondamento.
 
-Premissa financeira informada pela empresa: boleto mínimo de R$ 200,00; emissão R$ 1,58 + transação do split payment R$ 0,39 = R$ 1,97 (referência arredondada de R$ 2,00). R$ 1,97 / R$ 200,00 = 0,985% do valor do boleto. O padrão de 1% é aplicado sobre o custo líquido neste simulador, inclusive nos exemplos, ao restaurar padrão e quando a API omite financial. Não equivale a 1% da venda: a cobertura depende da relação entre custo, venda e número de boletos. A tarifa não é somada outra vez ao percentual.
+Premissa financeira informada pela empresa: boleto mínimo de R$ 200,00; emissão R$ 1,58 + transação do split payment R$ 0,39 = R$ 1,97 (referência arredondada de R$ 2,00). R$ 1,97 / R$ 200,00 = 0,985% do valor do boleto. O padrão de 1% é aplicado sobre o custo líquido neste simulador, ao restaurar padrão e quando a API omite financial. Não equivale a 1% da venda: a cobertura depende da relação entre custo, venda e número de boletos. A tarifa não é somada outra vez ao percentual.
