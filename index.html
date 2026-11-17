@@ -14,8 +14,8 @@
   <link rel="alternate icon" type="image/png" href="assets/apolo-site.png">
   <link rel="apple-touch-icon" href="assets/apolo-site.png">
   <link rel="stylesheet" href="styles.css?v=marcas-1">
-  <script src="calculator.js?v=financeiro-promocao-3" defer></script>
-  <script src="app.js?v=financeiro-promocao-3" defer></script>
+  <script src="calculator.js?v=financeiro-padrao1-4" defer></script>
+  <script src="app.js?v=financeiro-padrao1-4" defer></script>
 </head>
 
 <body>
@@ -88,8 +88,8 @@
             </div>
           </div>
           <div class="field"><label for="financial">Taxa financeira do split payment</label>
-            <div class="input-wrap"><input id="financial" type="text" inputmode="decimal" value="0" aria-describedby="financial-help financial-error"><span>%</span></div>
-            <p id="financial-help" class="help">Percentual total sobre o custo líquido para esta operação, incluindo o efeito dos prazos. Não é alíquota tributária nem tarifa obrigatória. Use 0 se já estiver embutido no ganho.</p>
+            <div class="input-wrap"><input id="financial" type="text" inputmode="decimal" value="1" aria-describedby="financial-help financial-error"><span>%</span></div>
+            <p id="financial-help" class="help">Padrão interno: 1% sobre o custo líquido. Referência: boleto mínimo de R$ 200,00, emissão de R$ 1,58 + transação de R$ 0,39 = R$ 1,97 por boleto. Isso equivale a 0,985% do boleto mínimo; como a base aqui é o custo, a cobertura efetiva depende da relação custo/venda e da quantidade de boletos. Use 0 se já estiver embutido no ganho.</p>
             <p id="financial-error" class="field-error" hidden></p>
           </div>
           <div class="field margin-field"><label id="margin-label" for="margin">Ganho desejado sobre o custo</label>
@@ -112,7 +112,7 @@
           <div class="price-card">
             <div class="price-card-heading"><span id="result-title">Preço de venda sugerido</span><span
                 class="card-symbol" aria-hidden="true">R$</span></div>
-            <div id="price-result" class="price-result">R$ 111,56</div>
+            <div id="price-result" class="price-result">R$ 112,49</div>
             <div class="price-card-footer"><span id="price-caption">Preço com ICMS, CBS e IBS</span><span
                 id="mode-caption">A partir do custo</span></div>
           </div>
@@ -209,8 +209,8 @@
       </div>
       <div class="example-grid">
         <button type="button" class="example" data-example="cost"><span class="example-number">01</span><span
-            class="example-content"><strong>Formar preço</strong><span>Custo R$ 70,00 · Ganho sobre o custo 20%</span><b
-              id="example-cost-result">Venda R$ 111,56</b><small>Carregar exemplo</small></span></button>
+            class="example-content"><strong>Formar preço</strong><span>Custo R$ 70,00 · Ganho 20% · Financeiro 1%</span><b
+              id="example-cost-result">Venda R$ 112,49</b><small>Carregar exemplo</small></span></button>
         <button type="button" class="example" data-example="inverse"><span class="example-number">02</span><span
             class="example-content"><strong>Analisar uma venda</strong><span>Custo R$ 70,00 · Venda R$ 150,00</span><b
               id="example-inverse-result"></b><small>Carregar exemplo</small></span></button>

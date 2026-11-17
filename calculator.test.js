@@ -75,7 +75,9 @@ test('interface initializes, recalculates financial and promotion, and allows ed
     querySelectorAll() { return []; }
   }, setTimeout() { return 0; }, clearTimeout() {}, console };
   vm.runInNewContext(fs.readFileSync(__dirname + '/app.js', 'utf8'), context);
-  assert.match(elements['price-result'].textContent, /111,56/);
+  assert.match(elements['price-result'].textContent, /112,49/);
+  assert.equal(elements.financial.value, '1');
+  assert.match(elements['financial-result'].textContent, /0,70/);
   elements.financial.value = '2';
   elements.margin.value = '35';
   elements['form-panel'].events.input();

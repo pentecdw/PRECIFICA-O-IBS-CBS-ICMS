@@ -130,7 +130,7 @@ A indicação visual de **“Acesso privado”** não implementa autenticação.
 
 ## Taxa financeira do split payment
 
-Taxa total por operação sobre o custo líquido, de 0% a 100%, padrão 0%. Não é tributo nem tarifa obrigatória do split payment. Informe o efeito financeiro estimado para os prazos de estoque, pagamento e recebimento. Se já estiver incluído no ganho, mantenha zero para não duplicar. O simulador não apura a segregação bancária nem créditos disponíveis.
+Taxa total por operação sobre o custo líquido, de 0% a 100%, padrão 1%. Não é tributo nem tarifa obrigatória do split payment. Informe o efeito financeiro estimado para os prazos de estoque, pagamento e recebimento. Se já estiver incluído no ganho, mantenha zero para não duplicar. O simulador não apura a segregação bancária nem créditos disponíveis.
 
 O ganho e o índice sobre custo são apresentados após descontar o financeiro. A composição separa custo, tributos, financeiro e sobra. Na entrada por base, o custo máximo é ajustado a centavos para preservar o ganho após o financeiro arredondado.
 
@@ -145,3 +145,5 @@ Nos campos monetários, `1.000` significa mil reais e `1.000,00` também. Use v�
 ## Verificação
 
 Execute `node --test calculator.test.js` para conferir promoções, piso operacional, ganho, custo financeiro e arredondamento.
+
+Premissa financeira informada pela empresa: boleto mínimo de R$ 200,00; emissão R$ 1,58 + transação do split payment R$ 0,39 = R$ 1,97 (referência arredondada de R$ 2,00). R$ 1,97 / R$ 200,00 = 0,985% do valor do boleto. O padrão de 1% é aplicado sobre o custo líquido neste simulador, inclusive nos exemplos, ao restaurar padrão e quando a API omite financial. Não equivale a 1% da venda: a cobertura depende da relação entre custo, venda e número de boletos. A tarifa não é somada outra vez ao percentual.

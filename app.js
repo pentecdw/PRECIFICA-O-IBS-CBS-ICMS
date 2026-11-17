@@ -128,7 +128,7 @@
     if (focus) $('tab-' + next).focus();
   }
   function loadExample(name) {
-    $('icms').value = '18'; $('cbs').value = '8,8'; $('ibs').value = '0,1'; $('margin').value = '20'; $('financial').value = '0'; $('promotion-minimum').value = '20';
+    $('icms').value = '18'; $('cbs').value = '8,8'; $('ibs').value = '0,1'; $('margin').value = '20'; $('financial').value = '1'; $('promotion-minimum').value = '20';
     tab = name === 'inverse' ? 'inverse' : 'forward';
     $('basis').value = name === 'base' ? 'base' : 'cost';
     $('amount').value = name === 'base' ? '100,00' : '70,00';
@@ -157,7 +157,7 @@
     $('amount').focus({ preventScroll: true });
     $('simulation-title').scrollIntoView({ behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth', block: 'start' });
   }));
-  const scenario = { icms: 18, cbs: 8.8, ibs: .1, margin: 20 };
+  const scenario = { icms: 18, cbs: 8.8, ibs: .1, margin: 20, financial: 1 };
   const exampleCost = calc.calculate({ ...scenario, mode: 'cost', amount: 70 });
   setText('example-cost-result', 'Venda ' + money(exampleCost.price));
   const exampleInverse = calc.calculate({ ...scenario, mode: 'inverse', amount: 70, price: 150 });
@@ -176,7 +176,7 @@
       icms: { type: 'number', description: 'Alíquota percentual de ICMS.' },
       cbs: { type: 'number', description: 'Alíquota percentual de CBS.' },
       ibs: { type: 'number', description: 'Alíquota percentual de IBS.' },
-      financial: { type: 'number', description: 'Custo financeiro estimado do split payment, percentual total sobre o custo líquido da operação, de 0 a 100; padrão zero.' },
+      financial: { type: 'number', description: 'Custo financeiro estimado do split payment, percentual total sobre o custo líquido da operação, de 0 a 100; padrão 1%.' },
       margin: { type: 'number', description: 'Ganho desejado ou meta de comparação, percentual do custo líquido; aceita 100% ou mais.' }
     }, required: ['mode', 'amount', 'icms', 'cbs', 'ibs', 'margin'], additionalProperties: false };
     try {
@@ -190,7 +190,7 @@
           tab = input.mode === 'inverse' ? 'inverse' : 'forward';
           $('basis').value = input.mode === 'base' ? 'base' : 'cost';
           for (const key of ['amount', 'icms', 'cbs', 'ibs', 'margin']) $(key).value = String(input[key]).replace('.', ',');
-          $('financial').value = String(input.financial ?? 0).replace('.', ',');
+          $('financial').value = String(input.financial ?? 1).replace('.', ',');
           if (input.mode === 'inverse') $('price').value = String(input.price).replace('.', ',');
           return render();
         }

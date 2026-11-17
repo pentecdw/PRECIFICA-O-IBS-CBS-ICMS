@@ -45,7 +45,7 @@
     const errors = validate(input);
     if (Object.keys(errors).length) return { ok: false, errors };
     // margin mantém o nome da entrada por compatibilidade; representa ganho sobre o custo.
-    const i = input.icms / 100, c = input.cbs / 100, b = input.ibs / 100, m = input.margin / 100, f = (input.financial ?? 0) / 100;
+    const i = input.icms / 100, c = input.cbs / 100, b = input.ibs / 100, m = input.margin / 100, f = (input.financial ?? 1) / 100;
     const retained = (1 - i) / (1 + c + b);
     let cost = round(input.amount), exactPrice, result;
     if (input.mode === 'cost') {
@@ -74,7 +74,7 @@
     }
     const financialCost = round(cost * f);
     const profit = round(result.net - cost - financialCost);
-    return { ok: true, ...result, cost, financialCost, financialRate: input.financial ?? 0, profit, actualMargin: profit / result.price * 100,
+    return { ok: true, ...result, cost, financialCost, financialRate: input.financial ?? 1, profit, actualMargin: profit / result.price * 100,
       actualGain: cost > 0 ? profit / cost * 100 : null,
       taxBurden: result.totalTaxes / result.price * 100, retained, exactPrice,
       breakEven: (cost + financialCost) / retained, target: input.margin, mode: input.mode,
